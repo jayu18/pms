@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>BILLING</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<h1> Billing </h1>
+ </header>
+ <nav>
+   <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="billing.html">Billing</a></li>
+    <li style="float:right"><a class="active" href="#about">Login</a></li
+    </ul>
+</nav>
+<td><input type="text" placeholder="Item name" class="form-control" /></td>
+<td class="text-center"><input type="number" min="1" id="target" placeholder="Quantity" class="form-control quantity" /></td>
+<td class="text-center"><input type="text" placeholder="TAX" class="form-control tax" /></td>
+<td class="text-right"><input type="text" placeholder="Price" class="form-control" /></td>
+<td class="text-right"><input type="text" disabled placeholder="0,00" class="form-control price" /></td>
+<script>
+function addItem(){
+
+    var itemRow =
+            '<tr>' +
+                '<td><input type="text" class="form-control" placeholder="Item name" /></td>' +
+                '<td><input type="text" class="form-control" placeholder="Quantity" /></td>' +
+                '<td><input type="text" class="form-control tax" placeholder="Tax" /></td>' +
+                '<td><input type="text" class="form-control" placeholder="Price" /></td>' +
+                '<td><input type="text" class="form-control price" disabled placeholder="0,00" /></td>' +
+            '</tr>';
+
+    $("#items_table tr:last").after(itemRow);
+}
+</script>
+ <script>
+    var total = 0;
+    var taxTotal = 0;
+
+    (function() {
+        $('#items_table').on('change', 'input', function() {
+            if( !$(this).hasClass('tax')) {
+                totalPrice = 0;
+
+                var row = $(this).closest('tr');
+
+                // ## Get quantity
+                var qty = parseFloat(row.find('input:eq(1)').val());
+
+                if (qty < 0) {
+                    row.addClass('danger');
+                    return;
+                } else {
+                    row.removeClass('danger');
+                }
+
+                // ## Get the entered price
+                var price = parseFloat(row.find('input:eq(3)').val());
+
+                if (price < 0) {
+                    row.addClass('danger');
+                    return;
+                } else {
+                    row.removeClass('danger');
+                }
+
+                // ## Calculate total price
+                var total = qty * price;
+
+                // ## Set total price at the end
+                row.find('input:eq(4)').val(isNaN(total) ? '' : total);
+
+                tax = parseFloat(row.find('input:eq(2)').val());
+
+                var salesTax = total * (tax / 100);
+
+                if (!isNaN(salesTax)) {
+
+                    $('#tax-' + row.find('input:eq(2)').val()).html(salesTax.toFixed(2));
+
+                    $('#tax_percentage').html(tax + '%');
+                    $('#tax_total').html('&euro; ' + salesTax.toFixed(2));
+
+                    $('.price').each(function (i, obj) {
+                        // ## Add all the prices again
+                        totalPrice = totalPrice += parseFloat($(this).val()) + salesTax;
+                    });
+                }
+
+                $('#total_price').html('&euro; ' + totalPrice.toFixed(2));
+            }else{
+
+                // ## Remove all the taxes
+                $('[id^=tax-tr-]').remove();
+
+
+                if($('#tax-'+ $(this).val()).length > 0 ){
+                    console.log('it already exists');
+                }else{
+
+                    $('.tax').each(function (i, obj) {
+                        var itemRow =
+                                '<tr id="tax-tr-' + $(this).val() + '">' +
+                                    '<td colspan="4" class="font-w600 text-right">BTW ' + $(this).val() + '%</td>' +
+                                    '<td style="width: 20%;" class="text-right">&euro; <span id="tax-' + $(this).val() + '">0</span></td>' +
+                                '</tr>';
+
+                        $("#subtotal_table tr").eq(-2).after(itemRow);
+                    });
+
+                }
+
+            }
+        });
+    })();
+</script>
