@@ -15,104 +15,591 @@ v<!DOCTYPE html>
     <li style="float:right"><a class="active" href="#about">Login</a></li
     </ul>
 </nav>
-<td><input type="text" placeholder="Service" class="form-control" /></td>
-<td class="text-center"><input type="number" min="1" id="target" placeholder="Quantity" class="form-control quantity" /></td>
-<td class="text-center"><input type="text" placeholder="TAX" class="form-control tax" /></td>
-<td class="text-right"><input type="text" placeholder="Price" class="form-control" /></td>
-<td class="text-right"><input type="text" disabled placeholder="0,00" class="form-control price" /></td>
-<script>
-function addItem(){
+</div>
 
-    var itemRow =
-            '<tr>' +
-                '<td><input type="text" class="form-control" placeholder="Item name" /></td>' +
-                '<td><input type="text" class="form-control" placeholder="Quantity" /></td>' +
-                '<td><input type="text" class="form-control tax" placeholder="Tax" /></td>' +
-                '<td><input type="text" class="form-control" placeholder="Price" /></td>' +
-                '<td><input type="text" class="form-control price" disabled placeholder="0,00" /></td>' +
-            '</tr>';
+                    <a href="#" class="btn btn-sm btn-success ajax-loader" id="btn_save_invoice">
+                <i class="fa fa-check"></i> Save            </a>
+            </div>
 
-    $("#items_table tr:last").after(itemRow);
-}
-</script>
- <script>
-    var total = 0;
-    var taxTotal = 0;
+    <div class="headerbar-item invoice-labels pull-right">
+                    </div>
 
-    (function() {
-        $('#items_table').on('change', 'input', function() {
-            if( !$(this).hasClass('tax')) {
-                totalPrice = 0;
+</div>
 
-                var row = $(this).closest('tr');
+<div id="content">
 
-                // ## Get quantity
-                var qty = parseFloat(row.find('input:eq(1)').val());
+    
+    <form id="invoice_form">
+        <div class="invoice">
 
-                if (qty < 0) {
-                    row.addClass('danger');
-                    return;
-                } else {
-                    row.removeClass('danger');
-                }
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-5">
 
-                // ## Get the entered price
-                var price = parseFloat(row.find('input:eq(3)').val());
+                    <h3>
+                        <a href="https://demo.invoiceplane.com/index.php/clients/view/14">
+                            James J. Bowman                        </a>
+                                            </h3>
+                    <br>
+                    <div class="client-address">
+                        
+<span class="client-address-street-line">
+    196-0-196-98 Murdock Ave<br></span>
+<span class="client-address-street-line">
+    </span>
+<span class="client-adress-town-line">
+    St. Albans     NY     11412</span>
+<span class="client-adress-country-line">
+    <br>United States</span>
+                    </div>
+                                            <hr>
+                                                                <div>
+                            Phone:&nbsp;
+                            208-531-7922                        </div>
+                                        
+                </div>
 
-                if (price < 0) {
-                    row.addClass('danger');
-                    return;
-                } else {
-                    row.removeClass('danger');
-                }
+                <div class="col-xs-12 visible-xs"><br></div>
 
-                // ## Calculate total price
-                var total = qty * price;
+                <div class="col-xs-12 col-sm-5 col-sm-offset-1 col-md-6 col-md-offset-1">
+                    <div class="details-box panel panel-default panel-body">
+                        <div class="row">
 
-                // ## Set total price at the end
-                row.find('input:eq(4)').val(isNaN(total) ? '' : total);
+                            
+                            <div class="col-xs-12 col-md-6">
 
-                tax = parseFloat(row.find('input:eq(2)').val());
+                                <div class="invoice-properties">
+                                    <label>Invoice #</label>
+                                    <input type="text" id="invoice_number" class="form-control input-sm" value="INV-18-0025">
+                                </div>
 
-                var salesTax = total * (tax / 100);
+                                <div class="invoice-properties has-feedback">
+                                    <label>Date</label>
 
-                if (!isNaN(salesTax)) {
+                                    <div class="input-group">
+                                        <input name="invoice_date_created" id="invoice_date_created" class="form-control input-sm datepicker" value="04/09/2018">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-calendar fa-fw"></i>
+                                        </span>
+                                    </div>
+                                </div>
 
-                    $('#tax-' + row.find('input:eq(2)').val()).html(salesTax.toFixed(2));
+                                <div class="invoice-properties has-feedback">
+                                    <label>Due Date</label>
 
-                    $('#tax_percentage').html(tax + '%');
-                    $('#tax_total').html('&euro; ' + salesTax.toFixed(2));
+                                    <div class="input-group">
+                                        <input name="invoice_date_due" id="invoice_date_due" class="form-control input-sm datepicker" value="05/09/2018">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-calendar fa-fw"></i>
+                                        </span>
+                                    </div>
+                                </div>
 
-                    $('.price').each(function (i, obj) {
-                        // ## Add all the prices again
-                        totalPrice = totalPrice += parseFloat($(this).val()) + salesTax;
-                    });
-                }
+                                <!-- Custom fields -->
+                                                                                                            <div class="form-group">
+        <div class="">
+            <label for="custom[3]">
+                Sent at            </label>
+        </div>
+                <div class="controls">
+                        <input type="text" class="form-control input-sm datepicker" name="custom[3]" id="3" value="">
+                    </div>
+    </div>
+                                    
+                            </div>
 
-                $('#total_price').html('&euro; ' + totalPrice.toFixed(2));
-            }else{
+                            <div class="col-xs-12 col-md-6">
 
-                // ## Remove all the taxes
-                $('[id^=tax-tr-]').remove();
+                                <div class="invoice-properties">
+                                    <label>
+                                        Status <span class="small">(Can be changed)</span>                                    </label>
+                                    <select name="invoice_status_id" id="invoice_status_id" class="form-control input-sm simple-select">
+                                                                                    <option value="1">
+                                                Draft                                            </option>
+                                                                                    <option value="2">
+                                                Sent                                            </option>
+                                                                                    <option value="3" selected="selected">
+                                                Viewed                                            </option>
+                                                                                    <option value="4">
+                                                Paid                                            </option>
+                                                                            </select>
+                                </div>
 
+                                <div class="invoice-properties">
+                                    <label>Payment Method</label>
+                                    <select name="payment_method" id="payment_method" class="form-control input-sm simple-select">
+                                        <option value="0">Select the Payment Method</option>
+                                                                                    <option value="1">
+                                                Cash                                            </option>
+                                                                                    <option value="2">
+                                                Credit Card                                            </option>
+                                                                                    <option value="3">
+                                                Check                                            </option>
+                                                                            </select>
+                                </div>
 
-                if($('#tax-'+ $(this).val()).length > 0 ){
-                    console.log('it already exists');
-                }else{
+                                <div class="invoice-properties">
+                                    <label>PDF password (optional)</label>
+                                    <input type="text" id="invoice_password" class="form-control input-sm" value="">
+                                </div>
+                            </div>
 
-                    $('.tax').each(function (i, obj) {
-                        var itemRow =
-                                '<tr id="tax-tr-' + $(this).val() + '">' +
-                                    '<td colspan="4" class="font-w600 text-right">BTW ' + $(this).val() + '%</td>' +
-                                    '<td style="width: 20%;" class="text-right">&euro; <span id="tax-' + $(this).val() + '">0</span></td>' +
-                                '</tr>';
+                                                            <div class="col-xs-12 col-md-6">
+                                    <div class="form-group">
+                                        <label for="invoice-guest-url">Guest URL</label>
+                                        <div class="input-group">
+                                            <input type="text" id="invoice-guest-url" readonly class="form-control" value="https://demo.invoiceplane.com/index.php/guest/view/invoice/Abm7gBRUM3XvYGPnZHJWir0VtzayT2No">
+                                            <span class="input-group-addon to-clipboard cursor-pointer" data-clipboard-target="#invoice-guest-url">
+                                                <i class="fa fa-clipboard fa-fw"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                        </div>
+                    </div>
+                </div>
 
-                        $("#subtotal_table tr").eq(-2).after(itemRow);
-                    });
+            </div>
 
-                }
+            <br>
 
-            }
-        });
-    })();
-</script>
+            <div class="table-responsive">
+    <table id="item_table" class="items table table-condensed table-bordered no-margin">
+        <thead style="display: none">
+        <tr>
+            <th></th>
+            <th>Item</th>
+            <th>Description</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Tax Rate</th>
+            <th>Subtotal</th>
+            <th>Tax</th>
+            <th>Total</th>
+            <th></th>
+        </tr>
+        </thead>
+
+        <tbody id="new_row" style="display: none;">
+        <tr>
+            <td rowspan="2" class="td-icon">
+                <i class="fa fa-arrows cursor-move"></i>
+                            </td>
+            <td class="td-text">
+                <input type="hidden" name="invoice_id" value="25">
+                <input type="hidden" name="item_id" value="">
+                <input type="hidden" name="item_product_id" value="">
+                <input type="hidden" name="item_task_id" class="item-task-id" value="">
+
+                <div class="input-group">
+                    <span class="input-group-addon">Item</span>
+                    <input type="text" name="item_name" class="input-sm form-control" value="">
+                </div>
+            </td>
+            <td class="td-amount td-quantity">
+                <div class="input-group">
+                    <span class="input-group-addon">Quantity</span>
+                    <input type="text" name="item_quantity" class="input-sm form-control amount" value="">
+                </div>
+            </td>
+            <td class="td-amount">
+                <div class="input-group">
+                    <span class="input-group-addon">Price</span>
+                    <input type="text" name="item_price" class="input-sm form-control amount" value="">
+                </div>
+            </td>
+            <td class="td-amount">
+                <div class="input-group">
+                    <span class="input-group-addon">Item Discount</span>
+                    <input type="text" name="item_discount_amount" class="input-sm form-control amount" value="" data-toggle="tooltip" data-placement="bottom" title="$ per Item">
+                </div>
+            </td>
+            <td>
+                <div class="input-group">
+                    <span class="input-group-addon">Tax Rate</span>
+                    <select name="item_tax_rate_id" class="form-control input-sm">
+                        <option value="0">None</option>
+                                                    <option value="1">
+                                4.00% - NY                            </option>
+                                                    <option value="4">
+                                5.00% - VA                            </option>
+                                                    <option value="3">
+                                6.00% - PA                            </option>
+                                                    <option value="6">
+                                6.85% - NV                            </option>
+                                                    <option value="2">
+                                7.00% - NJ                            </option>
+                                                    <option value="5">
+                                8.25% - CA                            </option>
+                                            </select>
+                </div>
+            </td>
+            <td class="td-icon text-right td-vert-middle">
+                <button type="button" class="btn_delete_item btn btn-link btn-sm" title="Delete">
+                    <i class="fa fa-trash-o text-danger"></i>
+                </button>
+            </td>
+        </tr>
+        <tr>
+                            <td class="td-textarea">
+                    <div class="input-group">
+                        <span class="input-group-addon">Description</span>
+                        <textarea name="item_description" class="input-sm form-control"></textarea>
+                    </div>
+                </td>
+                        <td class="td-amount">
+                <div class="input-group">
+                    <span class="input-group-addon">Product Unit</span>
+                    <select name="item_product_unit_id" class="form-control input-sm">
+                        <option value="0">None</option>
+                                                    <option value="2">
+                                fl oz/fl oz                            </option>
+                                                    <option value="3">
+                                Gallon/Gallons                            </option>
+                                                    <option value="6">
+                                Hour/Hours                            </option>
+                                                    <option value="4">
+                                pound/pounds                            </option>
+                                                    <option value="5">
+                                ton/tons                            </option>
+                                                    <option value="1">
+                                Unit/Units                            </option>
+                                            </select>
+                </div>
+            </td>
+            <td class="td-amount td-vert-middle">
+                <span>Subtotal</span><br/>
+                <span name="subtotal" class="amount"></span>
+            </td>
+            <td class="td-amount td-vert-middle">
+                <span>Discount</span><br/>
+                <span name="item_discount_total" class="amount"></span>
+            </td>
+            <td class="td-amount td-vert-middle">
+                <span>Tax</span><br/>
+                <span name="item_tax_total" class="amount"></span>
+            </td>
+            <td class="td-amount td-vert-middle">
+                <span>Total</span><br/>
+                <span name="item_total" class="amount"></span>
+            </td>
+        </tr>
+        </tbody>
+
+                    <tbody class="item">
+            <tr>
+                <td rowspan="2" class="td-icon">
+                    <i class="fa fa-arrows cursor-move"></i>
+                                    </td>
+
+                <td class="td-text">
+                    <input type="hidden" name="invoice_id" value="25">
+                    <input type="hidden" name="item_id" value="50">
+                    <input type="hidden" name="item_task_id" class="item-task-id" value="">
+                    <input type="hidden" name="item_product_id" value="1">
+
+                    <div class="input-group">
+                        <span class="input-group-addon">Item</span>
+                        <input type="text" name="item_name" class="input-sm form-control" value="Ford Taurus SEL">
+                    </div>
+                </td>
+                <td class="td-amount td-quantity">
+                    <div class="input-group">
+                        <span class="input-group-addon">Quantity</span>
+                        <input type="text" name="item_quantity" class="input-sm form-control amount" value="1.00">
+                    </div>
+                </td>
+                <td class="td-amount">
+                    <div class="input-group">
+                        <span class="input-group-addon">Price</span>
+                        <input type="text" name="item_price" class="input-sm form-control amount" value="29,775.00">
+                    </div>
+                </td>
+                <td class="td-amount">
+                    <div class="input-group">
+                        <span class="input-group-addon">Item Discount</span>
+                        <input type="text" name="item_discount_amount" class="input-sm form-control amount" value="775.00" data-toggle="tooltip" data-placement="bottom" title="$ per Item">
+                    </div>
+                </td>
+                <td class="td-amount">
+                    <div class="input-group">
+                        <span class="input-group-addon">Tax Rate</span>
+                        <select name="item_tax_rate_id" class="form-control input-sm">
+                            <option value="0">None</option>
+                                                            <option value="1">
+                                    4.00% - NY                                </option>
+                                                            <option value="4">
+                                    5.00% - VA                                </option>
+                                                            <option value="3">
+                                    6.00% - PA                                </option>
+                                                            <option value="6">
+                                    6.85% - NV                                </option>
+                                                            <option value="2">
+                                    7.00% - NJ                                </option>
+                                                            <option value="5">
+                                    8.25% - CA                                </option>
+                                                    </select>
+                    </div>
+                </td>
+                <td class="td-icon text-right td-vert-middle">
+                                            <button type="button" class="btn_delete_item btn btn-link btn-sm" title="Delete" data-item-id="50">
+                            <i class="fa fa-trash-o text-danger"></i>
+                        </button>
+                                    </td>
+            </tr>
+
+            <tr>
+                                    <td class="td-textarea">
+                        <div class="input-group">
+                            <span class="input-group-addon">Description</span>
+                            <textarea name="item_description" class="input-sm form-control"></textarea>
+                        </div>
+                    </td>
+                
+                <td class="td-amount">
+                    <div class="input-group">
+                        <span class="input-group-addon">Product Unit</span>
+                        <select name="item_product_unit_id" class="form-control input-sm">
+                            <option value="0">None</option>
+                                                            <option value="2">
+                                    fl oz/fl oz                                </option>
+                                                            <option value="3">
+                                    Gallon/Gallons                                </option>
+                                                            <option value="6">
+                                    Hour/Hours                                </option>
+                                                            <option value="4">
+                                    pound/pounds                                </option>
+                                                            <option value="5">
+                                    ton/tons                                </option>
+                                                            <option value="1" selected="selected">
+                                    Unit/Units                                </option>
+                                                    </select>
+                    </div>
+                </td>
+                <td class="td-amount td-vert-middle">
+                    <span>Subtotal</span><br/>
+                    <span name="subtotal" class="amount">
+                        $29,775.00                    </span>
+                </td>
+                <td class="td-amount td-vert-middle">
+                    <span>Discount</span><br/>
+                    <span name="item_discount_total" class="amount">
+                        $775.00                    </span>
+                </td>
+                <td class="td-amount td-vert-middle">
+                    <span>Tax</span><br/>
+                    <span name="item_tax_total" class="amount">
+                        $0.00                    </span>
+                </td>
+                <td class="td-amount td-vert-middle">
+                    <span>Total</span><br/>
+                    <span name="item_total" class="amount">
+                        $29,000.00                    </span>
+                </td>
+            </tr>
+            </tbody>
+        
+    </table>
+</div>
+
+<br>
+
+<div class="row">
+    <div class="col-xs-12 col-md-4">
+        <div class="btn-group">
+                            <a href="#" class="btn_add_row btn btn-sm btn-default">
+                    <i class="fa fa-plus"></i> Add new row                </a>
+                <a href="#" class="btn_add_product btn btn-sm btn-default">
+                    <i class="fa fa-database"></i>
+                    Add product                </a>
+                <a href="#" class="btn_add_task btn btn-sm btn-default">
+                    <i class="fa fa-database"></i> Add task                </a>
+                    </div>
+    </div>
+
+    <div class="col-xs-12 visible-xs visible-sm"><br></div>
+
+    <div class="col-xs-12 col-md-6 col-md-offset-2 col-lg-4 col-lg-offset-4">
+        <table class="table table-bordered text-right">
+            <tr>
+                <td style="width: 40%;">Subtotal</td>
+                <td style="width: 60%;" class="amount">$29,000.00</td>
+            </tr>
+            <tr>
+                <td>Item Tax</td>
+                <td class="amount">$0.00</td>
+            </tr>
+            <tr>
+                <td>Invoice Tax</td>
+                <td>
+                    $0.00                </td>
+            </tr>
+            <tr>
+                <td class="td-vert-middle">Discount</td>
+                <td class="clearfix">
+                    <div class="discount-field">
+                        <div class="input-group input-group-sm">
+                            <input id="invoice_discount_amount" name="invoice_discount_amount" class="discount-option form-control input-sm amount" value="">
+                            <div class="input-group-addon">$</div>
+                        </div>
+                    </div>
+                    <div class="discount-field">
+                        <div class="input-group input-group-sm">
+                            <input id="invoice_discount_percent" name="invoice_discount_percent" value="" class="discount-option form-control input-sm amount">
+                            <div class="input-group-addon">&percnt;</div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>Total</td>
+                <td class="amount"><b>$29,000.00</b></td>
+            </tr>
+            <tr>
+                <td>Paid</td>
+                <td class="amount"><b>$0.00</b></td>
+            </tr>
+            <tr>
+                <td><b>Balance</b></td>
+                <td class="amount"><b>$29,000.00</b></td>
+            </tr>
+        </table>
+    </div>
+
+</div>
+
+            <hr/>
+
+            <div class="row">
+                <div class="col-xs-12 col-md-6">
+
+                    <div class="panel panel-default no-margin">
+                        <div class="panel-heading">
+                            Invoice Terms                        </div>
+                        <div class="panel-body">
+                            <textarea id="invoice_terms" name="invoice_terms" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 visible-xs visible-sm"><br></div>
+
+                </div>
+                <div class="col-xs-12 col-md-6">
+
+                    <div class="panel panel-default no-margin">
+
+    <div class="panel-heading">
+        Attachments    </div>
+
+    <div class="panel-body clearfix">
+        <!-- The fileinput-button span is used to style the file input field as button -->
+        <div class="alert alert-danger">
+            Uploads are disabled in the demo.
+        </div>
+
+        <!-- dropzone -->
+        <div class="row">
+            <div id="actions" class="col-xs-12">
+                <div class="col-lg-7"></div>
+                <div class="col-lg-5">
+                    <!-- The global file processing state -->
+                    <div class="fileupload-process">
+                        <div id="total-progress" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                            <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="previews" class="table table-condensed files no-margin">
+                    <div id="template" class="file-row">
+                        <!-- This is used as the file preview template -->
+                        <div>
+                            <span class="preview"><img data-dz-thumbnail /></span>
+                        </div>
+                        <div>
+                            <p class="name" data-dz-name></p>
+                            <strong class="error text-danger" data-dz-errormessage></strong>
+                        </div>
+                        <div>
+                            <p class="size" data-dz-size></p>
+                            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                                <div class="progress-bar progress-bar-success" style="" data-dz-uploadprogress></div>
+                            </div>
+                        </div>
+                        <div class="pull-left btn-group">
+                            <button data-dz-download class="btn btn-sm btn-primary">
+                                <i class="fa fa-download"></i>
+                                <span>Download</span>
+                            </button>
+                                                            <button data-dz-remove class="btn btn-danger btn-sm delete">
+                                    <i class="fa fa-trash-o"></i>
+                                    <span>Delete</span>
+                                </button>
+                                                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- stop dropzone -->
+    </div>
+
+</div>
+
+                </div>
+            </div>
+
+                            <div class="row">
+                    <div class="col-xs-12">
+
+                        <hr>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Custom Fields                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+
+                                    <div class="col-xs-12 col-md-6">
+                                                                                                                                                                </div>
+                                    <div class="col-xs-12 col-md-6">
+                                                                                                                                                                </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            
+        </div>
+
+    </form>
+</div>
+
+<script>function getIcon(fullname){var fileFormat=fullname.match(/\.([A-z0-9]{1,5})$/);if(fileFormat){fileFormat=fileFormat[1];}else{fileFormat='';}var fileIcon='default';switch(fileFormat){case'pdf':fileIcon='file-pdf';break;case'mp3':case'wav':case'ogg':fileIcon='file-audio';break;case'doc':case'docx':case'odt':fileIcon='file-document';break;case'xls':case'xlsx':case'ods':fileIcon='file-spreadsheet';break;case'ppt':case'pptx':case'odp':fileIcon='file-presentation';break;}return fileIcon;}var previewNode=document.querySelector('#template');previewNode.id='';var previewTemplate=previewNode.parentNode.innerHTML;previewNode.parentNode.removeChild(previewNode);var myDropzone=new Dropzone(document.body,{url:'https://demo.invoiceplane.com/index.php/upload/upload_file/14/Abm7gBRUM3XvYGPnZHJWir0VtzayT2No',params:{'_ip_csrf':Cookies.get('ip_csrf_cookie'),},thumbnailWidth:80,thumbnailHeight:80,parallelUploads:20,uploadMultiple:false,dictRemoveFileConfirmation:'Are you sure you wish to delete this attachment?',previewTemplate:previewTemplate,autoQueue:true,previewsContainer:'#previews',clickable:'.fileinput-button',init:function(){thisDropzone=this;$.getJSON('https://demo.invoiceplane.com/index.php/upload/upload_file/14/Abm7gBRUM3XvYGPnZHJWir0VtzayT2No',function(data){$.each(data,function(index,val){var mockFile={fullname:val.fullname,size:val.size,name:val.name};thisDropzone.options.addedfile.call(thisDropzone,mockFile);createDownloadButton(mockFile,'https://demo.invoiceplane.com/index.php/upload/get_file/'+val.fullname);if(val.fullname.match(/\.(jpg|jpeg|png|gif)$/)){thisDropzone.options.thumbnail.call(thisDropzone,mockFile,'https://demo.invoiceplane.com/index.php/upload/get_file/'+val.fullname);}else{fileIcon=getIcon(val.fullname);thisDropzone.options.thumbnail.call(thisDropzone,mockFile,'https://demo.invoiceplane.com/assets/core/img/file-icons/'+fileIcon+'.svg');}thisDropzone.emit('complete',mockFile);thisDropzone.emit('success',mockFile);});});},});myDropzone.on('success',function(file,response){if(typeof response!=='undefined'){response=JSON.parse(response);if(response.success!==true){alert(response.message);}}});myDropzone.on('addedfile',function(file){var fileIcon=getIcon(file.name);myDropzone.emit('thumbnail',file,'https://demo.invoiceplane.com/assets/core/img/file-icons/'+fileIcon+'.svg');createDownloadButton(file,'https://demo.invoiceplane.com/index.php/upload/get_file/Abm7gBRUM3XvYGPnZHJWir0VtzayT2No_'+file.name.replace(/\s+/g,'_'));});myDropzone.on('totaluploadprogress',function(progress){document.querySelector('#total-progress .progress-bar').style.width=progress+'%';});myDropzone.on('sending',function(file){document.querySelector('#total-progress').style.opacity='1';});myDropzone.on('queuecomplete',function(progress){document.querySelector('#total-progress').style.opacity='0';});myDropzone.on('removedfile',function(file){$.post({url:'https://demo.invoiceplane.com/index.php/upload/delete_file/Abm7gBRUM3XvYGPnZHJWir0VtzayT2No',data:{'name':file.name.replace(/\s+/g,'_'),_ip_csrf:Cookies.get('ip_csrf_cookie')}},function(response){});});function createDownloadButton(file,fileUrl){var downloadButtonList=file.previewElement.querySelectorAll('[data-dz-download]');for(var $i=0;$i<downloadButtonList.length;$i++){downloadButtonList[$i].addEventListener('click',function(e){e.preventDefault();e.stopPropagation();location.href=fileUrl;return false;});}}</script>
+    </div>
+
+</div>
+
+<div id="modal-placeholder"></div>
+
+<div id="fullpage-loader" style="display: none">
+    <div class="loader-content">
+        <i id="loader-icon" class="fa fa-cog fa-spin"></i>
+        <div id="loader-error" style="display: none">
+            It seems that the application stuck because of an error.<br/>
+            <a href="https://wiki.invoiceplane.com/en/1.0/general/faq" class="btn btn-primary btn-sm" target="_blank">
+                <i class="fa fa-support"></i> Get Help            </a>
+        </div>
+    </div>
+    <div class="text-right">
+        <button type="button" class="fullpage-loader-close btn btn-link tip" aria-label="Close" title="Close" data-placement="left">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+    </div>
+</div>
+
+<script defer src="https://demo.invoiceplane.com/assets/core/js/scripts.min.js.pagespeed.ce.rsI6Au250n.js"></script>
+
+</body>
+</html>
